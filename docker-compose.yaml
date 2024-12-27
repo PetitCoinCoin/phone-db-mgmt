@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=strongpwd
+      - POSTGRES_DB=operatordb
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "postgres" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+
+  test-db:
+    image: postgres:13
+    profiles: [test]
+    ports:
+     - 5433:5433
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=strongpwd
+      - POSTGRES_DB=testdb
+    command: -p 5433
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "${POSTGRES_DB}", "-U", "postgres" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+  
+  # ui:
+  #   build: ui
+  #   ports:
+  #     - 80:80
+  #   depends_on:
+  #     - api
+
+  server:
+    build: server
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - POSTGRES_DB=operatordb
+    volumes:
+      - ./server:/code
+    ports:
+     - 8000:8000
+    depends_on:
+      db:
+        condition: service_healthy
