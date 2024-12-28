@@ -5,3 +5,5 @@
 .ruff_cache
 .coverage
 venv
+
+node_modules

@@ -27,23 +27,26 @@ services:
       interval: 10s
       retries: 10
   
-  # ui:
-  #   build: ui
-  #   ports:
-  #     - 80:80
-  #   depends_on:
-  #     - api
+  ui:
+    build: ui
+    ports:
+      - 8080:80
+    depends_on:
+      - server
+    volumes:
+      - ./ui/Caddyfile:/etc/caddy/Caddyfile
 
   server:
     build: server
     environment:
+      - PORT=80
       - DB_HOST=db
       - DB_PORT=5432
       - POSTGRES_DB=operatordb
     volumes:
       - ./server:/code
-    ports:
-     - 8000:8000
+    expose:
+      - 8000
     depends_on:
       db:
         condition: service_healthy
