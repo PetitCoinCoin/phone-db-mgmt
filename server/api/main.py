@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.responses import RedirectResponse
 
 from api.routers import (
     customers,
@@ -17,8 +16,3 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
 )
-
-@app.get("/")
-async def redirect_to_docs():
-    response = RedirectResponse(url="/api/docs")
-    return response

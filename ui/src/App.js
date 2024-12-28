@@ -21,6 +21,7 @@ function App() {
       method: 'GET',
       mode: 'cors',
     })
+      .then(response => response.json())
       .then(data => {
         setter(data)
       })
